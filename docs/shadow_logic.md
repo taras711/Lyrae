@@ -1,21 +1,18 @@
-/**
-* ShadowEvaluatorHelper.js
-*
+# ShadowEvaluatorHelper.js
+
 * Provides helper functions and utilities for evaluating shadow DOM structures.
 * Includes methods for traversing, finding, and manipulating shadow roots and their contents.
 * Used by the internal shadow DOM evaluation logic to ensure consistent and efficient operations.
 */
 
-/**
-* ShadowEvaluatorMirror.js
+# ShadowEvaluatorMirror.js
 *
 * Implements a mirroring mechanism for shadow DOM evaluation.
 * Maintains a synchronized view of the shadow DOM tree for efficient comparison,
 * state tracking, and updates. Facilitates debugging and testing by providing a mirrored view of changes to the shadow DOM.
 */
 
-/**
-* shadowReactor.js
+# shadowReactor.js
 *
 * Acts as a reactive engine for shadow DOM updates.
 * Watches for changes within shadow roots and triggers appropriate reactions or updates.
@@ -23,8 +20,7 @@
 * with data and state changes.
 */
 
-/**
-* shadowSimulator.js
+# shadowSimulator.js
 *
 * Simulates shadow DOM behavior for testing and development purposes.
 * Provides mock shadow DOM APIs and lifecycle events,
