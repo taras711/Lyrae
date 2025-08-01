@@ -1,0 +1,17 @@
+.scenario-router-panel {
+  background: #f5f5fa;
+  border: 2px solid #dcdce0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 12px;
+  font-family: system-ui, sans-serif;
+}
+
+.scenario-router-panel h2 {
+  margin-bottom: 12px;
+  font-size: 1.4rem;
+}
+
+.scenario-router-panel p {
+  margin: 6px 0;
+}

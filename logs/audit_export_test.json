@@ -1,0 +1,82 @@
+[
+  {
+    "time": 1753282216437,
+    "traceId": "TRACE-VFCLTYNU",
+    "type": "scenario.activate",
+    "action": "LoginScenario.run",
+    "trust": 0.52,
+    "status": "✅ OK",
+    "userId": "USR-1001",
+    "role": "user"
+  },
+  {
+    "time": 1753282216443,
+    "traceId": "TRACE-P4UGGT3F",
+    "type": "scenario.activate",
+    "action": "RecoveryScenario.run",
+    "trust": 0.77,
+    "status": "✅ OK",
+    "userId": "USR-1001",
+    "role": "user"
+  },
+  {
+    "time": 1753282216443,
+    "traceId": "TRACE-2Q8X3Z8N",
+    "type": "module.call",
+    "action": "AuthCenter.initSession",
+    "trust": 0.91,
+    "status": "❌ Denied",
+    "userId": "USR-1001",
+    "role": "user"
+  },
+  {
+    "time": 1753282216444,
+    "traceId": "TRACE-22LJKVAA",
+    "type": "intent.reject",
+    "action": "ActivateSectorFlow",
+    "trust": 0.36,
+    "status": "❌ Blocked",
+    "userId": "USR-1001",
+    "role": "user"
+  },
+  {
+    "time": 1753282216444,
+    "traceId": "TRACE-C9O59EH3",
+    "type": "scenario.activate",
+    "action": "LoginScenario.run",
+    "trust": 0.52,
+    "status": "✅ OK",
+    "userId": "USR-2002",
+    "role": "admin"
+  },
+  {
+    "time": 1753282216444,
+    "traceId": "TRACE-K3YWEWXK",
+    "type": "scenario.activate",
+    "action": "RecoveryScenario.run",
+    "trust": 0.77,
+    "status": "✅ OK",
+    "userId": "USR-2002",
+    "role": "admin"
+  },
+  {
+    "time": 1753282216445,
+    "traceId": "TRACE-OKLDQ8BV",
+    "type": "module.call",
+    "action": "AuthCenter.initSession",
+    "trust": 0.91,
+    "status": "❌ Denied",
+    "userId": "USR-2002",
+    "role": "admin"
+  },
+  {
+    "time": 1753282216445,
+    "traceId": "TRACE-310W7EC0",
+    "type": "intent.reject",
+    "action": "ActivateSectorFlow",
+    "trust": 0.36,
+    "status": "❌ Blocked",
+    "userId": "USR-2002",
+    "role": "admin"
+  }
+]

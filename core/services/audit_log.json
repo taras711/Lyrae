@@ -1,0 +1,99 @@
+[
+  {
+    "time": 1753282539653,
+    "traceId": "TRACE-FBRX9SUL",
+    "type": "token.activity",
+    "action": "token.verify",
+    "userId": "USR-5555",
+    "role": "tester",
+    "trust": 0.44,
+    "expired": false,
+    "valid": true,
+    "status": "✅ Valid check"
+  },
+  {
+    "time": 1753285480563,
+    "traceId": "TRACE-GC47E6QY",
+    "type": "scenario.blocked",
+    "userId": "USR-7001",
+    "role": "developer",
+    "trust": 0.42,
+    "status": "❌ Blocked",
+    "reason": "Trust or security restriction",
+    "scenario": "AccessRestrictedScenario"
+  },
+  {
+    "time": 1753286005506,
+    "traceId": "TRACE-P2N930CH",
+    "type": "scenario.blocked",
+    "userId": "USR-7001",
+    "role": "developer",
+    "trust": 0.42,
+    "status": "❌ Blocked",
+    "reason": "Trust or security restriction",
+    "scenario": "AccessRestrictedScenario"
+  },
+  {
+    "time": 1753286005507,
+    "traceId": "TRACE-TDDE7D4J",
+    "type": "scenario.blocked",
+    "userId": "USR-7001",
+    "role": "developer",
+    "trust": 0.42,
+    "status": "❌ Blocked",
+    "reason": "Trust or security restriction",
+    "scenario": "SensitiveScenario"
+  },
+  {
+    "time": 1753286223673,
+    "traceId": "TRACE-UQKV9DFD",
+    "type": "scenario.blocked",
+    "userId": "USR-7001",
+    "role": "developer",
+    "trust": 0.42,
+    "status": "❌ Blocked",
+    "reason": "Trust or security restriction",
+    "scenario": "AccessRestrictedScenario",
+    "securityLevel": 2,
+    "minTrust": 0.5,
+    "maxSecurityLevel": 2
+  },
+  {
+    "time": 1753286223674,
+    "traceId": "TRACE-92LPE6GI",
+    "type": "scenario.blocked",
+    "userId": "USR-7001",
+    "role": "developer",
+    "trust": 0.42,
+    "status": "❌ Blocked",
+    "reason": "Trust or security restriction",
+    "scenario": "SensitiveScenario",
+    "securityLevel": 2,
+    "minTrust": 0.5,
+    "maxSecurityLevel": 2
+  },
+  {
+    "time": 1753287027363,
+    "traceId": "TRACE-GT2YZFZJ",
+    "type": "scenario.blocked",
+    "userId": "USR-7001",
+    "role": "developer",
+    "trust": 0.42,
+    "status": "❌ Blocked",
+    "reason": "Trust or security restriction",
+    "scenario": "DataExportScenario",
+    "securityLevel": 2,
+    "minTrust": 0.5,
+    "maxSecurityLevel": 2
+  },
+  {
+    "time": 1753586892422,
+    "traceId": "TRACE-0XJ8R6AO",
+    "type": "scenario.routed",
+    "userId": "USR-1007",
+    "trust": 0.41,
+    "securityLevel": 2,
+    "status": "🔁 Redirected to sandbox",
+    "scenario": "CriticalExport"
+  }
+]

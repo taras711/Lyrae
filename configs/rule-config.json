@@ -1,0 +1,8 @@
+{
+  "maxExportSize": 50,
+  "allowGuestUpload": true,
+  "securityOverrides": {
+    "auditor": true,
+    "guest": false
+  }
+}

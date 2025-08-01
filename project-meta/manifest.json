@@ -1,0 +1,22 @@
+{
+  "name": "NebulaLang",
+  "owner": "Taras",
+  "version": "0.1.0-alpha",
+  "created": "2025-07-19",
+  "license": "NebulaLang-CreativeLicense-1.0",
+  "auth_required": true,
+  "team": ["Taras"],
+  "project_type": "language-core",
+  "protected_modules": ["auth", "signal-tunnel"],
+  "description": "NebulaLang is a programming language designed for building decentralized applications with a focus on security and scalability.",
+  "features": [
+    "Strong typing",
+    "Concurrency support",
+    "Built-in cryptographic functions",
+    "Interoperability with existing languages"
+  ],
+  "dependencies": {
+    "nebula-core": "^1.0.0",
+    "nebula-crypto": "^1.0.0"
+  }
+}

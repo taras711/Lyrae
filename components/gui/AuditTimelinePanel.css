@@ -1,0 +1,29 @@
+.trust-panel {
+  padding: 1rem;
+  background: #f0f9ff;
+  border-radius: 8px;
+  font-family: sans-serif;
+}
+.trust-graph {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 120px;
+}
+.trust-point {
+  text-align: center;
+  width: 40px;
+}
+.trust-bar {
+  width: 100%;
+  background: #3498db;
+  border-radius: 4px;
+}
+.trust-time {
+  font-size: 0.7em;
+  color: #555;
+}
+.trust-score {
+  font-size: 0.8em;
+  font-weight: bold;
+}

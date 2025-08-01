@@ -1,0 +1,2 @@
+# ❌ Nedokumentované funkce
+

@@ -1,0 +1,46 @@
+[
+  {
+    "time": 1753278833684,
+    "source": "testRun",
+    "userId": "USR-3090",
+    "role": "analyst",
+    "trust": 0.71,
+    "expired": false,
+    "valid": true,
+    "issuedAt": 1753278833000,
+    "validUntil": 1753282433000
+  },
+  {
+    "time": 1753280784400,
+    "source": "testRun",
+    "userId": "USR-3090",
+    "role": "analyst",
+    "trust": 0.71,
+    "expired": false,
+    "valid": true,
+    "issuedAt": 1753280784000,
+    "validUntil": 1753284384000
+  },
+  {
+    "time": 1753284651212,
+    "source": "pre-anomaly",
+    "userId": "USR-9010",
+    "role": "dev",
+    "trust": 0.75,
+    "expired": false,
+    "valid": true,
+    "issuedAt": 1753284651000,
+    "validUntil": 1753288251000
+  },
+  {
+    "time": 1753284651213,
+    "source": "anomaly-trigger",
+    "userId": "USR-9010",
+    "role": "dev",
+    "trust": 0.38,
+    "expired": false,
+    "valid": true,
+    "issuedAt": 1753284651000,
+    "validUntil": 1753288251000
+  }
+]

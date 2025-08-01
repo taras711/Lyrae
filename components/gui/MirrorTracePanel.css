@@ -1,0 +1,27 @@
+.mirror-trace-panel {
+  padding: 16px;
+  background: #f9fafb;
+}
+.trace-card {
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.trace-card.approved {
+  border-left: 4px solid #10b981;
+  background-color: #ecfdf5;
+}
+.trace-card.denied {
+  border-left: 4px solid #ef4444;
+  background-color: #fef2f2;
+}
+.trace-meta span {
+  margin-right: 10px;
+  font-size: 0.85em;
+}
+.trace-reason {
+  margin-top: 8px;
+  font-style: italic;
+  color: #374151;
+}
