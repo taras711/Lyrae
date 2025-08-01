@@ -1,82 +1,82 @@
-# Architektura systému
+# System architecture
 
-Projekt Lyrae je modulární platforma složená z více komponent, které spolu komunikují přes „tunel“ a orchestrátor. Hlavními prvky jsou:
+The Lyrae project is a modular platform consisting of several components that communicate with each other via a "tunnel" and an orchestrator. The main elements are:
 
-* **TunnelService (Token Tunnel)** – poskytuje publish/subscribe mechanismus pro mezikomponentovou komunikaci (kanály jako `alerts`, `audit` apod.). Umožňuje posílat zprávy mezi session řadiči, sekcemi a dalšími službami.
-* **SessionController** – řídí uživatelskou relaci (login, logout, scénáře) a inicializuje kanály tunelu (např. zapisuje upozornění a záznamy do auditu). Vytváří bezpečnostní kontext a spouští příslušné scénáře.
-* **SectorOrchestrator a SectorNode** – zajišťují směrování úmyslů (intents) do jednotlivých sektorů. `SectorOrchestrator` obsahuje pravidla pro mapování úmyslů na sektory (např. `alert` na `AuditCenter`) a kontroluje úroveň důvěry. Každý sektor (`SectorNode`) v sobě integruje knihovny scénářů, modulů a API. Například `SectorNode.broadcast(message)` odesílá zprávu všem posluchačům daného sektoru přes tunel.
-* **IntentRouter a UI DSL** – řídí vizuální komponenty podle uživatelského úmyslu. `IntentRouter` sbírá log příkazů (`CommandInsights`) a generuje „souhrn“ (obsahující např. focus nebo recoveryIntent). Ten se pak aplikuje na parser vlastního UI-DSL jazyka (načteného `UIDSLParser`), aby se vybraly aktivní panely (vyhodnocení výrazů `when:`). Tím se dynamicky mění UI podle kontextu.
-* **IntentScheduler a SecureIntentWrapper (Reaktor úmyslů)** – plánují a spouští výkonné akce („intents“) s podporou bezpečného zpracování. `IntentScheduler` řadí úmysly do fronty a spouští je paralelně až do stanoveného limitu. Pro každý úmysl používá `SecureIntentWrapper`, který provádí samotnou operaci s timeoutem a v případě selhání spouští záložní (fallback) akci. Tento „reaktor“ zajišťuje, že žádný úmysl nezablokuje běh systému (viz *SecureIntentWrapper*).
-* **Služby a moduly** – Lyrae podporuje dynamickou registraci modulů s přístupovým řízením (`ModuleRegistry` + `AccessControlledModule`). Například může existovat modul pro data, kterému jsou přiřazeny metody a role povolení. Modulární architektura dovoluje rozšiřování platformy bez zásahu do jádra. Dále jsou komponenty jako **AuditService**, **SignatureAnomalyDetector** (detekce anomálií podepisování tokenů) a **TokenLifecycleManager** pro správu životního cyklu bezpečnostních tokenů.
-* **Úložiště a fronty** – systém udržuje perzistentní frontu „ghost“ scénářů (`PersistentGhostQueue` a `GhostScenarioQueue`), kam se ukládají předpovědi uživatelských akcí pro pozdější zpracování. Jsou zde také databáze nebo JSON logy pro audit a revokované tokeny.
+* **TunnelService (Token Tunnel)** – provides a publish/subscribe mechanism for inter-component communication (channels such as `alerts`, `audit`, etc.). It allows sending messages between session controllers, sections and other services.
+* **SessionController** – manages the user session (login, logout, scenarios) and initializes the tunnel channels (e.g. writes alerts and records to the audit). It creates a security context and runs the appropriate scenarios.
+* **SectorOrchestrator and SectorNode** – ensure the routing of intents to individual sectors. `SectorOrchestrator` contains rules for mapping intents to sectors (e.g. `alert` to `AuditCenter`) and checks the level of trust. Each sector (`SectorNode`) integrates libraries of scenarios, modules and APIs. For example, `SectorNode.broadcast(message)` sends a message to all listeners of a given sector via a tunnel.
+* **IntentRouter and UI DSL** – controls visual components according to user intent. `IntentRouter` collects a log of commands (`CommandInsights`) and generates a "summary" (containing e.g. focus or recoveryIntent). This is then applied to the parser of the custom UI-DSL language (loaded by `UIDSLParser`) to select active panels (evaluating `when:` expressions). This dynamically changes the UI according to the context.
+* **IntentScheduler and SecureIntentWrapper** – schedule and execute powerful actions (“intents”) with support for secure processing. `IntentScheduler` queues intents and executes them in parallel up to a specified limit. For each intent, it uses `SecureIntentWrapper`, which performs the operation itself with a timeout and triggers a fallback action in case of failure. This `reactor` ensures that no intent blocks the system (see *SecureIntentWrapper*).
+* **Services and Modules** – Lyrae supports dynamic registration of modules with access control (`ModuleRegistry` + `AccessControlledModule`). For example, there can be a module for data, which is assigned methods and permission roles. The modular architecture allows the platform to be extended without touching the core. There are also components such as **AuditService**, **SignatureAnomalyDetector** (detection of token signing anomalies) and **TokenLifecycleManager** for managing the lifecycle of security tokens.
+* **Storage and queues** – the system maintains a persistent queue of "ghost" scenarios (`PersistentGhostQueue` and `GhostScenarioQueue`), where predictions of user actions are stored for later processing. There are also databases or JSON logs for audit and revoked tokens.
 
-Těmito komponentami Lyrae zajišťuje tok dat podle principů *tokenového tunelu*, orchestraci a paralelní zpracování (reaktor) a „stínovou“ (shadow) komunikaci mezi klientem a serverem.
+With these components, Lyrae ensures data flow according to the principles of *token tunnel*, orchestration and parallel processing (reactor) and "shadow" communication between the client and the server.
 
-## Jazyková syntaxe
+## Language syntax
 
-Lyrae využívá vlastní DSL především pro definici UI komponent a procesů. Například UI DSL umožňuje definovat panely takto:
+Lyrae uses its own DSL primarily for defining UI components and processes. For example, UI DSL allows you to define panels like this:
 
 ```
-panel RecoveryPanel {  
-  when: intent.focus == "recovery"  
-  show: true  
-}  
+panel RecoveryPanel {
+when: intent.focus == "recovery"
+show: true
+}
 ```
 
-* **Parser (UIDSLParser)** – parsuje DSL řádek po řádku. Každé `panel` vytvoří objekt s názvem a vlastnostmi. Podmínky `when:` jsou uloženy jako řetězce, později vyhodnocované `UIDSLRuntime`.
-* **Vyhodnocení podmínek (UIDSLRuntime)** – při běhu se přezkoumá každý panel: pokud je nastavena podmínka `when` a její logický výraz vyjde pravdivě v kontextu aktuálního úmyslu, panel se označí jako aktivní. Tím se určuje, které komponenty se zobrazí.
-* **Konstrukce a klíčová slova** – v DSL převládají základní příkazy: `panel`, `when`, `show`. Podmínka je vyjádřena logickým výrazem, obvykle porovnáním s proměnnou `intent` (která je objekt s informací o úmyslu uživatele). Podobné syntaxi pracuje IntentRouter i pro vykreslování UI.
-* **Reprezentace úmyslu** – úmysl uživatele není v jazyce vyjádřen přímo syntaxí (jako u klasických programovacích jazyků), ale je odvozen z historie příkazů. `CommandInsights` například vrací `focus` (např. `"recovery"`), které je pak podklad pro podmínky UI. Tedy záměr je reprezentován objektově a DSL ho jen využívá.
+* **Parser (UIDSLParser)** – parses the DSL line by line. Each `panel` creates an object with a name and properties. `when:` conditions are stored as strings, later evaluated by `UIDSLRuntime`.
+* **Condition evaluation (UIDSLRuntime)** – each panel is examined at runtime: if a `when` condition is set and its logical expression evaluates to true in the context of the current intent, the panel is marked as active. This determines which components are displayed.
+* **Constructs and keywords** – the basic commands in the DSL are dominant: `panel`, `when`, `show`. The condition is expressed as a logical expression, usually by comparing it to an `intent` variable (which is an object with information about the user's intent). IntentRouter also uses a similar syntax for UI rendering.
+* **Intent representation** – the user's intent is not expressed directly in the language by syntax (as in classic programming languages), but is derived from the command history. For example, `CommandInsights` returns `focus` (e.g. `"recovery"`), which is then the basis for UI conditions. Thus, the intent is represented as an object and the DSL only uses it.
 
-Lyrae zatím nemá komplexní definovanou gramatiku na vstup (neprovádí syntaktickou analýzu vstupu v běžném slova smyslu), ale UI DSL parser ilustruje, jak by se dalo rozšířit vlastní syntaxe. Celkově se interně chápe význam úmyslu z kontextu a historie, což odpovídá principu porozumění *kontextu a záměru*.
+Lyrae does not yet have a comprehensively defined grammar for input (it does not perform syntactic analysis of input in the usual sense), but the UI DSL parser illustrates how its own syntax could be extended. Overall, the meaning of intent is understood internally from context and history, which corresponds to the principle of understanding *context and intent*.
 
-## Bezpečnostní model
+## Security model
 
-Základním prvkem bezpečnosti jsou JWT tokeny a vlastnosti „důvěry“. Klíčové aspekty modelu:
+The basic element of security are JWT tokens and "trust" properties. Key aspects of the model:
 
-* **SecurityToken** – třída obaluje informace o uživateli: `userId`, `role`, `trust` (důvěryhodnost), platnost, oprávnění, atd. Token se vytváří a ověřuje pomocí `SecurityTokenLayer` (JWT s tajným klíčem). Tokeny nesou metadata (ID uživatele, role, úroveň důvěry) a používají se pro autorizaci.
-* **Trust Supervisor** – komponenta `TrustSupervisor` pravidelně vyhodnocuje historii tokenu a případné anomálie (pomocí `TrustAnomalyDetector`). Na základě úspěšných či zamítnutých akcí upravuje skóre důvěry (`trust`) v tokenu. Tento dynamický model důvěry umožňuje, že uživatel nebo stínový (ghost) klient získává vyšší či nižší práva podle chování.
-* **Zero-Trust přístup** – Lyrae uplatňuje princip „nikdy nedůvěřuj, vždy ověřuj“. Každá operace je autorizována na základě tokenu: jde o digitální podepsané údaje, jejich platnost a skóre důvěry se kontrolují před provedením akce. Tento přístup odpovídá zásadám Zero-Trust (bez implicitní důvěry) – systém *“assumes breach and verifies each request”*.
-* **Vrstevnaté signály (Signal Security Layers)** – každá instrukce či požadavek nese metadata původu a kontextu. Například při komunikaci mezi službami je předáváno ID uživatele a role. Podle OWASP je nezbytné, aby mikroservisy měly kontext volajícího (uživatelské ID, role) pro autorizaci. Lyrae tuto myšlenku implementuje – token nosí roli i historii akcí a každý sektor či služba může rozhodnout na základě těchto údajů.
-* **Audity a revokace** – `AuditService` zaznamenává každý citlivý event, záznam může být exportován pro revizi. Systém také umožňuje zrušení tokenů (`revoked_tokens.json`) a detekci anomálií podepisování. To doplňuje „trust-first“ model o trasovatelnost.
+* **SecurityToken** – the class encapsulates information about the user: `userId`, `role`, `trust`, validity, authenticationetc. The token is created and verified using `SecurityTokenLayer` (JWT with secret key). Tokens carry metadata (user ID, role, trust level) and are used for authorization.
+* **Trust Supervisor** – the `TrustSupervisor` component regularly evaluates the token history and any anomalies (using `TrustAnomalyDetector`). Based on successful or rejected actions, it adjusts the trust score (`trust`) in the token. This dynamic trust model allows a user or a ghost client to gain higher or lower rights based on behavior.
+* **Zero-Trust approach** – Lyrae applies the principle of “never trust, always verify”. Each operation is authorized based on the token: it is digitally signed data, its validity and trust score are checked before the action is performed. This approach corresponds to the principles of Zero-Trust (without implicit trust) – the system *“assumes breach and verifies each request”*.
+* **Signal Security Layers** – each instruction or request carries metadata of origin and context. For example, when communicating between services, the user ID and role are passed. According to OWASP, it is necessary for microservices to have the caller context (user ID, role) for authorization. Lyrae implements this idea – the token carries the role and history of actions, and each sector or service can make decisions based on this data.
+* **Audit and revocation** – `AuditService` records every sensitive event, the record can be exported for review. The system also allows for token revocation (`revoked_tokens.json`) and detection of signing anomalies. This complements the `trust-first` model with traceability.
 
-Celkově Lyrae kombinuje vrstvy zabezpečení: ověřuje JWT, udržuje šifrované tokeny interně, a aplikuje zásady minimálních práv na základě aktuální úrovně důvěry. Komponenty zajišťují, že kontext volání (ID uživatele) se propaguje napříč systémy, což je klíčové pro bezpečné, kontextově uvědomělé zpracování.
+Overall, Lyrae combines layers of security: it verifies JWT, maintains encrypted tokens internally, and applies least privilege policies based on the current trust level. The components ensure that the calling context (user ID) is propagated across systems, which is crucial for secure, context-aware processing.
 
-## Shadow komunikace (klient‑server synchronizace)
+## Shadow communication (client-server synchronization)
 
-Lyrae podporuje takzvanou „shadow UX“ – neviditelnou synchronizaci klienta a serveru na pozadí. Princip funguje takto: klient (nebo ghost agent) periodicky simuluje svůj další krok pomocí `simulateShadowSync(ghostToken)`. Tato funkce vytvoří **tunnelFrame** s předpovězeným úmyslem (`predictedIntent`), úrovní důvěry a mírou odchylky. Např. ukázkový ghostToken s historií akcí vrátí „predikci“ dalšího záměru.
-Na serveru `ShadowReactor` (metoda `evaluateShadowResponse`) tuto informaci vyhodnotí podle nastavených pravidel (např. minimální důvěra pro spouštěč). Výstup říká, zda má server „simulovat“ tento scénář, či jen „pozorovat“. Nakonec `ShadowBridge.forwardShadowPrediction` předává schválené predikce orchestrátoru (např. zařadí latentní „ghost“ scénář do fronty). To probíhá zcela na pozadí bez zásahu uživatele, tedy v duchu konceptu *silent UX*. (Projektový README tuto vrstvu popisuje jako „live, non-invasive client-server context sync“.) Výsledkem je, že server může proaktivně připravit akce na základě chování uživatele, aniž by o tom uživatel věděl. (V aktuální verzi je logika simulace jednoduchá, ale architektura podporuje pokročilejší prediktivní modely.)
+Lyrae supports the so-called “shadow UX” – invisible synchronization of the client and server in the background. The principle works as follows: the client (or ghost agent) periodically simulates its next step using `simulateShadowSync(ghostToken)`. This function creates a **tunnelFrame** with a predicted intent (`predictedIntent`), a confidence level, and a deviation rate. For example, a sample ghostToken with a history of actions returns a “prediction” of the next intent.
+On the server, `ShadowReactor` (method `evaluateShadowResponse`) evaluates this information according to the set rules (e.g. minimum trust for the trigger). The output tells whether the server should “simulate” this scenario or just “observe”. Finally, `ShadowBridge.forwardShadowPrediction` forwards the approved predictions to the orchestrator (e.g., queues a latent "ghost" scenario). This happens completely in the background without user intervention, in the spirit of the concept of *silent UX*. (The project README describes this layer as "live, non-invasive client-server context sync".) The result is that the server can proactively prepare actions based on user behavior without the user knowing about it. (In the current version, the simulation logic is simple, but the architecture supports more advanced predictive models.)
 
-## Sémantická analýza
+## Semantic Analysis
 
-Lyrae se snaží pochopit uživatelský úmysl vyhodnocením historie a kontextu. Historii příkazů ukládá `CommandLogger` a třída `CommandInsights` z ní generuje souhrn (např. „focus“ či „recoveryIntent“). Tím se modeluje záměr uživatele formou strukturovaného objektu. Například pokud nejčastější příkaz obsahuje „recovery“, `detectFocus()` vrátí `"recovery"`, což ovlivní UI a rozhodování. To odpovídá principu, že systém se soustředí na *porozumění záměru z kontextu*. Další inferenční mechanismy (např. `TrustSupervisor`, pravidla v orchestrátoru) využívají aktuální stav (role, historii chyb/slastí) k rozhodnutí o dalším průběhu. Předvídání (predictive) založené na historii a trustu je rovněž součástí – skrze *intention predictor* ve stínovém modulu, byť nyní velmi jednoduchý. Celkově Lyrae kombinuje analýzu logu akcí, znalosti o uživatelském profilu a bezpečnostní pravidla, aby pochopil a předpověděl úmysly.
+Lyrae tries to understand user intent by evaluating history and context. The command history is stored by `CommandLogger`, and the `CommandInsights` class generates a summary from it (e.g., "focus" or "recoveryIntent"). This models the user intent in the form of a structured object. For example, if the most common command contains "recovery", `detectFocus()` returns `"recovery"`, which affects the UI and decision-making. This corresponds to the principle that the system focuses on *understanding intent from context*. Other inference mechanisms (e.g. `TrustSupervisor`, rules in the orchestrator) use the current state (role, error/pleasure history) to decide on the next course of action. Predictive (predictive) based on history and trust is also included - through the *intention predictor* in the shadow module, although now very simple. Overall, Lyrae combines action log analysis, user profile knowledge and security rules to understand and predict intent.
 
-## Testovatelnost, modularita a rozšiřitelnost
+## Testability, modularity and extensibility
 
-Lyrae je postaveno objektově a modulárně, což usnadňuje testování a rozšíření. Každá komponenta má vlastní jednotkové testy (adresář *tests/unit*) – například testy validatorů tokenů, modulů, routování intentu a shadow komponent. Díky jasnému API (třídy s metodami) lze izolovaně testovat jednotlivé vrstvy (parser DSL, IntentRouter, SectorOrchestrator atd.).  Platforma podporuje plug-iny a nové moduly – `ModuleRegistry` umožní přidat vlastní modul s metodami a přiřazenými oprávněními. Scénáře jsou definovány samostatně (třídy ve složce *scenarios*) a lze je zaregistrovat v `ScenarioRegistry`. Díky tomu, že každá část (parser, executor, bezpečnost) má oddělený kód, lze systém rozšiřovat nebo refaktorovat bez zásahu do core logiky. Celkově kód vykazuje dobré rozdělení odpovědností a zřejmé body pro rozšíření (např. budoucí podpora dalších DSL jazyků, další typy signalizace, nové scénáře).
+Lyrae is built in an object-oriented and modular way, which makes testing and extension easy. Each component has its own unit tests (directory *tests/unit*) - for example, tests of token validators, modules, intent routing and shadow components. Thanks to a clear API (classes with methods), individual layers (parser DSL, IntentRouter, SectorOrchestrator, etc.) can be tested in isolation. The platform supports plug-ins and new modules – `ModuleRegistry` allows you to add your own module with methods and assigned permissions. Scenarios are defined separately (classes in the *scenarios* folder) and can be registered in `ScenarioRegistry`. Since each part (parser, executor, security) has separate code, the system can be extended or refactored without affecting the core logic. Overall, the code shows a good division of responsibilities and clear points for extension (e.g. future support for other DSL languages, other signaling types, new scenarios).
 
-## Dodržování principů projektu
+## Complying the project principles
 
-Lyrae deklaruje principy jako inteligentní zpracování, důraz na kontext a prediktivní logiku. Aktuální implementace tyto myšlenky do značné míry naplňuje:
+Lyrae declares principles such as intelligent processing, emphasis on context and predictive logic. The current implementation largely fulfills these ideas:
 
-* **Kontextové chápání:** Systém modeluje význam z uživatelské historie (příkazy, focus, recoveryIntent), podobně jako popisuje princip „porozumění záměru z kontextu“. UI DSL reaguje na dynamický kontext.
-* **Vícevrstvé tokeny:** Tokeny v systému nesou metadata (ID, role, historii akcí, skóre důvěry) – každý prvek akce nese svůj „původ“ a kontext (což odpovídá konceptu *Signal security layers* s kontextuálními metadaty).
-* **Shadow logika a UX:** Implementace simulace a synchronizace „shadow“ scénářů umožňuje předávání návrhů akcí serveru tichou cestou, jak projekt zamýšlí („non-invasive client-server context sync“).
-* **Prediktivní zpracování:** Lyrae pracuje s historickými daty a skóre důvěry pro předpověď budoucích úmyslů (např. `intentPredictor`) – to odpovídá myšlence „predictive tunneling“ (operačně na hypotetické budoucnosti).
+* **Contextual understanding:** The system models meaning from user history (commands, focus, recoveryIntent), similar to the principle of "understanding intent from context". UI DSL responds to dynamic context.
+* **Multi-layer tokens:** Tokens in the system carry metadata (ID, role, action history, trust score) - each action element carries its "origin" and context (which corresponds to the concept of *Signal security layers* with contextual metadata).
+* **Shadow logic and UX:** Implementation of simulation and synchronization of "shadow" scenarios allows for the transfer of action suggestions to the server in a silent way, as the project intends ("non-invasive client-server context sync").
+* **Predictive Processing:** Lyrae works with historical data and confidence scores to predict future intents (e.g. `intentPredictor`) – this corresponds to the idea of "predictive tunneling" (operationally on hypothetical futures).
 
-Z dokumentace vyplynulo, že některé vlastnosti jsou v raném stavu (chybí např. plná podpora CLI/ladicího rozhraní, některé plánované moduly). Ale základní vrstva inteligence, kontextové logiky a bezpečnosti funguje v souladu s návrhem.
+The documentation shows that some features are in an early state (e.g. full CLI/debug support, some planned modules are missing). But the basic intelligence, context logic and security layer works as designed.
 
-## Návrhy na vylepšení a další fáze
+## Suggestions for improvements and next phases
 
-Několik možných zlepšení vyplývá z analýzy:
+A few possible improvements emerge from the analysis:
 
-* **Parser jazyka:** Rozšířit DSL parser pro hlavní jazyk (zatím je minimalistický, jen UI DSL). Mohla by zde být formalizována gramatika pro vyjadřování úmyslů nebo dalších doménových operací.
-* **Architektura TunnelService:** V současnosti každá instance vlastní komunikační kanály; zvážit centralizovanou či distribuovanou zprávu (např. přes message broker) pro skutečné multi-klient/server prostředí.
-* **Shadow modul:** Provozní logika „stínové“ synchronizace může být rozšířena o skutečné asynchronní přenosy na server (např. WebSocket) a složitější predikční algoritmy (např. strojové učení). Také by orchestrátor měl disponovat funkcí pro přípravu (až spuštění) schválených ghost scénářů.
-* **Zabezpečení:** Přidat audit end-to-end šifrování mezi komponentami či vícevrstvé ověřování (mTLS) pro vyšší robustnost. Zavést shodu se standardy Zero-Trust (např. pravidelně kontrolovat platnost tokenu u CA, integrovat vícefaktorovou autentizaci).
-* **Refaktoring a optimalizace:** Některé služby (např. simulátor a vyhodnocovač shadow) by šly optimalizovat a unifikovat. Dále je možné rozdělit velké třídy na menší a přidat podrobnější error handling.
-* **Testy a dokumentace:** Rozšířit testovací scénáře (např. integrační testy klient-server), doplnit dokumentaci DSL a bezpečnostní politiky.
+* **Language Parser:** Extend the DSL parser for the main language (so far it is minimalistic, just UI DSL). A grammar for expressing intents or other domain operations could be formalized here.
+* **TunnelService Architecture:** Currently each instance has its own communication channels; consider centralized or distributed messaging (e.g. via message broker) for a true multi-client/server environment.
+* **Shadow module:** The operational logic of "shadow" synchronization can be extended with real asynchronous transfers to the server (e.g. WebSocket) and more complex prediction algorithms (e.g. machine learning). The orchestrator should also have a function for preparing (and running) approved ghost scenarios.
+* **Security:** Add audit end-to-end encryption between components or multi-layer authentication (mTLS) for higher robustness. Introduce compliance with Zero-Trust standards (e.g. regularly check the validity of the token with the CA, integrate multi-factor authentication).
+* **Refactoring and optimization:** Some services (e.g. simulator and shadow evaluator) could be optimized and unified. It is also possible to divide large classes into smaller ones and add more detailed error handling.
+* **Tests and documentation:** Expand test scenarios (e.g. client-server integration tests), supplement the DSL and security policy documentation.
 
-Celkově je Lyrae projekt v aktivním vývoji a má solidní architekturu pro zpracování záměru a bezpečnou komunikaci. Navržené vylepšení by zlepšilo škálovatelnost, bezpečnost a použitelnost (např. robustnější UI DSL, pokročilejší prediktivní modely) pro další fáze vývoje.
+Overall, the Lyrae project is in active development and has a solid architecture for intent processing and secure communication. Proposed improvements would improve scalability, security, and usability (e.g., more robust UI DSL, more advanced predictive models) for future development phases.
 
-**Zdroje:** Architektura a principy vycházejí z projektové dokumentace (články README, MD soubory) a obecně uznávaných zásad (např. Zero Trust, šíření kontextu v mikroservisách, význam kontextově-sémantického zpracování).
+**Sources:** The architecture and principles are based on project documentation (README articles, MD files) and generally accepted principles (e.g., Zero Trust, context propagation in microservices, importance of context-semantic processing).
