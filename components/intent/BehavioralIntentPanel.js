@@ -17,7 +17,7 @@ class BehavioralIntentPanel {
   }
 
   render() {
-    this.output.push("🧠 Predikovaný záměr uživatele:")
+    this.output.push("🧠 Predicted intent:")
 
     this.output.push(`• Last Command At: ${this.data.lastCommandAt}`)
     this.output.push(`• Recovery Intent: ${this.data.recoveryIntent}`)
