@@ -63,7 +63,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/lyrae.git" 
+    "url": "https://github.com/taras711/Lyrae.git"
   },
   "keywords": [
     "react",
@@ -78,9 +78,9 @@
     "modular",
     "react-app"
   ],
-  "homepage": "https://yourusername.github.io/lyrae",
+  "homepage": "https://taras711.github.io/Lyrae",
   "bugs": {
-    "url": "https://github.com/yourusername/lyrae/issues"
+    "url": "https://github.com/taras711/Lyrae/issues"
   },
   "config": {
     "maxExportSize": 50,
