@@ -1,5 +1,5 @@
 
-# ✅ NebulaLang Development Checklist (English Translation)
+# ✅ NebulaLang Development Checklist
 
 ---
 
