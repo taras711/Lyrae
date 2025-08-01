@@ -1,7 +1,3 @@
-Díky, pustím se do hluboké analýzy projektu Lyrae. Zaměřím se na architekturu, syntaxi jazyka, bezpečnostní model, runtime chování, komunikaci klient-server i soulad s popsanými principy (záměr, kontext, predikce atd.). Výsledkem bude odborný rozbor s doporučeními k dalšímu vývoji.
-Jakmile budu mít přehled o všech důležitých aspektech, dám ti vědět s detailní zprávou.
-
-
 # Architektura systému
 
 Projekt Lyrae je modulární platforma složená z více komponent, které spolu komunikují přes „tunel“ a orchestrátor. Hlavními prvky jsou:
