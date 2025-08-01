@@ -92,7 +92,7 @@ Lyrae bridges AI and security: a language that reads intent, reasons about meani
 git clone https://github.com/taras711/Lyrae.git
 cd Lyrae
 npm install
-node nebula.js
+node lyrae.js
 ```
 
 ---
