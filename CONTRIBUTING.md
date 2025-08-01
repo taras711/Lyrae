@@ -1,4 +1,4 @@
-# Contributing to NebulaLangProject
+# Contributing to LyraeLangProject
 
 Thank you for your interest in contributing! We welcome all contributions.
 
@@ -28,4 +28,4 @@ Please be respectful and inclusive in all interactions.
 
 ---
 
-Thank you for helping improve NebulaLangProject!
+Thank you for helping improve LyraeLangProject!

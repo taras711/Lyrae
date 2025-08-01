@@ -1,5 +1,5 @@
 
-# ✅ NebulaLang Development Checklist
+# ✅ Lyrae Development Checklist
 
 ---
 
