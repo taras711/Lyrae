@@ -1,34 +1,33 @@
 /**
- * ShadowEvaluatorHelper.js
- * 
- * Предоставляет вспомогательные функции и утилиты для оценки структур теневого DOM.
- * Включает методы для обхода, поиска и манипулирования теневыми корнями и их содержимым.
- * Используется внутренней логикой оценки теневого DOM для обеспечения согласованных и эффективных операций.
- */
+* ShadowEvaluatorHelper.js
+*
+* Provides helper functions and utilities for evaluating shadow DOM structures.
+* Includes methods for traversing, finding, and manipulating shadow roots and their contents.
+* Used by the internal shadow DOM evaluation logic to ensure consistent and efficient operations.
+*/
 
 /**
- * ShadowEvaluatorMirror.js
- * 
- * Реализует механизм зеркалирования для оценки теневого DOM.
- * Поддерживает синхронизированное представление дерева теневого DOM для эффективного сравнения,
- * отслеживания состояния и обновлений. Облегчает отладку и тестирование, предоставляя зеркальный вид
- * изменений в теневом DOM.
- */
+* ShadowEvaluatorMirror.js
+*
+* Implements a mirroring mechanism for shadow DOM evaluation.
+* Maintains a synchronized view of the shadow DOM tree for efficient comparison,
+* state tracking, and updates. Facilitates debugging and testing by providing a mirrored view of changes to the shadow DOM.
+*/
 
 /**
- * shadowReactor.js
- * 
- * Выполняет роль реактивного ядра для обновлений теневого DOM.
- * Наблюдает за изменениями внутри теневых корней и инициирует соответствующие реакции или обновления.
- * Интегрируется с реактивной системой приложения, чтобы теневой DOM оставался синхронизированным
- * с изменениями данных и состояния.
- */
+* shadowReactor.js
+*
+* Acts as a reactive engine for shadow DOM updates.
+* Watches for changes within shadow roots and triggers appropriate reactions or updates.
+* Integrates with the app's reactive system to keep the shadow DOM in sync
+* with data and state changes.
+*/
 
 /**
- * shadowSimulator.js
- * 
- * Симулирует поведение теневого DOM для целей тестирования и разработки.
- * Предоставляет имитации API теневого DOM и событий жизненного цикла,
- * позволяя изолированно тестировать компоненты, зависящие от функций теневого DOM.
- * Полезен в средах, где нативный теневой DOM недоступен или требует эмуляции.
- */
+* shadowSimulator.js
+*
+* Simulates shadow DOM behavior for testing and development purposes.
+* Provides mock shadow DOM APIs and lifecycle events,
+* allowing you to test components that depend on shadow DOM features in isolation.
+* Useful in environments where native shadow DOM is unavailable or requires emulation.
+*/
