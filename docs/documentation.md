@@ -5,7 +5,7 @@
 
 ### 📝 Documentation Blocks:
 > * @module config
-> * @description Configuration settings for the NebulaLangProject.
+> * @description Configuration settings for the LyraeLangProject.
 
 
 ---

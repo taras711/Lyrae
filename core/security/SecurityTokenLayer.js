@@ -1,15 +1,20 @@
-/**
+"use strict";
 
- * @author Starass
+const config = require("../../config");
 
- * @module SecurityTokenLayer
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const readline = require("readline");
+require("dotenv").config();
 
- * @description This module provides functions for working with JWT tokens.
+function getSecretKey() {
+  if (!config.jwtSecret || config.jwtSecret === "default_secret_key") {
+    console.error("JWT_SECRET is not set. Please define it in your .env file.");
+    process.exit(1);
+  }
+  return config.jwtSecret;
+}
 
- */
-
-const jwt = require("jsonwebtoken")
-const SECRET_KEY = "nebula-secret"
 
 /**
  * Signs a JWT token.
@@ -17,7 +22,7 @@ const SECRET_KEY = "nebula-secret"
  * @returns {string} - Signed JWT token.
  */
 function signToken(payload) {
-  return jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" })
+  return jwt.sign(payload, getSecretKey(), { expiresIn: "1h" });
 }
 
 /**
@@ -27,13 +32,13 @@ function signToken(payload) {
  */
 function verifyToken(token) {
   try {
-    return jwt.verify(token, SECRET_KEY)
+    return jwt.verify(token, getSecretKey());
   } catch (err) {
-    return null
+    return null;
   }
 }
 
 module.exports = {
   signToken,
   verifyToken
-}
+};

@@ -16,7 +16,7 @@
     "Interoperability with existing languages"
   ],
   "dependencies": {
-    "nebula-core": "^1.0.0",
-    "nebula-crypto": "^1.0.0"
+    "lyrae-core": "^1.0.0",
+    "lyrae-crypto": "^1.0.0"
   }
 }
