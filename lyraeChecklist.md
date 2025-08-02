@@ -24,6 +24,7 @@
 | Task                                              | Status     | Recommendation                                         |
 |---------------------------------------------------|------------|--------------------------------------------------------|
 | Cryptographic tokens (JWT)                        | ✅ Done     | `SecurityToken` with JWT signature                    |
+| Refactor JWT secret handling                      | ✅ Done     | process.env      |
 | Records snapshots of token states                 | ✅ Done     | `SecurityTokenHistory.js`                             |
 | Trust scoring with audit link                     | ✅ Done     | `TrustSupervisor.observeIntent()`                     |
 | Token introspection & dashboard                   | ✅ Done     | `TokenInspectorDashboard` + `describeJWT()`           |
