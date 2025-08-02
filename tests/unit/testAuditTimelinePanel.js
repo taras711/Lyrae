@@ -1,3 +1,9 @@
+/*
+
+This test suite contains tests for the AuditTimelinePanel.
+
+*/
+
 import React from "react"
 import AuditTimelinePanel from "./components/AuditTimelinePanel"
 import { getAll } from "../services/audit/PersistentAuditService"

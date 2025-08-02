@@ -1,3 +1,9 @@
+/*
+
+This test suite contains tests for the SystemDiagnostics.
+
+*/
+
 const SessionController = require("../../core/runtime/SessionController")
 const SystemDiagnostics = require("../../core/diagnostics/SystemDiagnostics")
 
@@ -12,5 +18,5 @@ controller.start()
 const diagnostics = new SystemDiagnostics(controller)
 const report = diagnostics.printSummary()
 
-console.log("📋 Systémová diagnostika:")
+console.log("System Diagnostics:")
 console.log(report.join("\n"))

@@ -1,4 +1,10 @@
 
+/*
+
+This test suite contains tests for the SecureIntentWrapper.
+
+*/
+
 const secureIntentWrapper = require('../../sectors/orchestration/SecureIntentWrapper');
 test('fallback is triggered when intent is invalid', async () => {
   const mockIntent = {

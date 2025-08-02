@@ -1,3 +1,7 @@
+/*
+ This test suite contains concurrency tests for the GhostIntentManager.
+*/
+
 describe('GhostIntentManager – Concurrency Tests', () => {
   const manager = new GhostIntentManager();
 

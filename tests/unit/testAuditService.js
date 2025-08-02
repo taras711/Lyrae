@@ -1,3 +1,9 @@
+/*
+
+This test suite contains tests for the AuditService.
+
+*/
+
 const AuditService = require("../../core/services/AuditService")
 const audit = new AuditService()
 
@@ -15,8 +21,8 @@ audit.log({
   trust: 0.86
 })
 
-console.log("📜 Audit historie:")
+console.log("Audit history:")
 console.log(audit.getHistory({ userId: "USR-1499" }))
 
-console.log("📊 Audit souhrn:")
+console.log("Audit summary:")
 console.log(audit.summarize())

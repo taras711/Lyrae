@@ -1,3 +1,9 @@
+/*
+
+This test suite contains error handling tests for the GhostIntentManager.
+
+*/
+
 describe('GhostIntentManager – Error Handling', () => {
   const manager = new GhostIntentManager();
 

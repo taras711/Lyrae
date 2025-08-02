@@ -1,3 +1,9 @@
+/*
+
+This test suite contains tests for the AuditSector.
+
+*/
+
 const Token = require("../../core/token/Token")
 const AuditSector = require("../../sectors/audit/AuditSector")
 
@@ -16,6 +22,6 @@ const mockLog = [
 const sector = new AuditSector({}, token, mockLog)
 const actions = sector.resolve()
 
-console.log("🔍 AuditSector akce:")
+console.log("AuditSector actions:")
 console.log(actions.join("\n"))
-console.log("\n🔐 Audit mode aktivní:", token.auditMode ? "✅ Ano" : "❌ Ne")
+console.log("\nAudit mode active:", token.auditMode ? "Yes" : "No")

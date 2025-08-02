@@ -1,32 +1,38 @@
-const SecurityToken = require("../../core/security/securityToken")
+/*
+
+  It tests the inter-sector protocol for handling intents and reactions between sectors.
+
+*/
+
+const SecurityToken = require("../../core/security/SecurityToken")
 const SectorNode = require("../../sectors/SectorNode")
 const SectorOrchestrator = require("../../sectors/orchestration/SectorOrchestrator")
 const InterSectorProtocol = require("../../sectors/orchestration/InterSectorProtocol")
 
-// 1️⃣ Příprava tokenu
+// Token preparation
 const token = new SecurityToken({
   userId: "USR-1499",
   role: "admin",
   trust: 0.6
 })
 
-// 2️⃣ Sektory
+// Sector setup
 const coreSector = new SectorNode({ id: "CoreSector", token })
 const auditSector = new SectorNode({ id: "AuditCenter", token })
 
-// 3️⃣ Orchestrátor
+// Orchestrator
 const orchestrator = new SectorOrchestrator()
 orchestrator.registerSector("CoreSector", coreSector)
 orchestrator.registerSector("AuditCenter", auditSector)
 
 orchestrator.evaluator.registerRule("recovery", [
-  { role: "admin", trustMin: 0.5, sector: "CoreSector" } // token nesplňuje → DENIED
+  { role: "admin", trustMin: 0.5, sector: "CoreSector" } // token does not comply → DENIED
 ])
 orchestrator.evaluator.registerRule("alert", [
   { role: "admin", trustMin: 0.5, sector: "AuditCenter" }
 ])
 
-// 4️⃣ Protokol
+// Protocol setup
 const protocol = new InterSectorProtocol()
 
 protocol.registerReaction("recovery", {
@@ -35,14 +41,16 @@ protocol.registerReaction("recovery", {
   forwardIntent: "alert"
 })
 
-// 5️⃣ Spuštění recovery záměru → odepřen
+// Run the protocol
+console.log("launching the inter-sector protocol...\n")
 const recoveryResult = orchestrator.activateIntent("recovery", token, { reason: "Test flow" })
-console.log("🧠 Výstup recovery:", recoveryResult)
+console.log("Recovery output:", recoveryResult)
 
-// 6️⃣ Vyhodnocení mezisektorové reakce
+// Evaluation of intersectoral response
 const reactions = protocol.handleSectorOutput(recoveryResult, orchestrator)
-console.log("🔁 Spuštěné reakce:", reactions)
+console.log("Triggered reactions:", reactions)
 
-// 7️⃣ Log historie
-console.log("📜 Tok reakční historie:")
+// Log history of the protocol
+console.log("\nProtocol history")
+console.log("Flow of reaction history:")
 console.log(protocol.describe().history)

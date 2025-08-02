@@ -1,3 +1,8 @@
+  /*
+
+This test suite contains tests for the SecureIntentWrapper.
+
+*/
 
 const secureIntentWrapper = require('../../sectors/orchestration/SecureIntentWrapper');
 

@@ -1,11 +1,17 @@
+/*
+
+This test suite contains tests for the BehaviorCycle.
+
+*/
+
 const SessionController = require("../../core/runtime/SessionController")
 const RuntimeRegistry = require("../../core/registry/RuntimeRegistry")
 const CommandInterface = require("../../core/interface/CommandInterface")
 const ComponentRenderer = require("../../components/ComponentRenderer")
 
-console.log("🎯 Spouštím behaviorální jazykový tok...\n")
+console.log("🎯 Starting behavioral language flow...\n")
 
-// 1️⃣ Inicializace systému
+// System initialization
 const controller = new SessionController({
   userId: "USR-1499",
   role: "admin",
@@ -13,28 +19,28 @@ const controller = new SessionController({
 })
 controller.start()
 
-// 2️⃣ Vytvoření příkazového rozhraní a loggeru
+// Command interface and logger creation
 const registry = new RuntimeRegistry()
 const cli = new CommandInterface(controller, registry)
 const logger = cli.logger
 
-// 3️⃣ Simulace příkazové sekvence
+// Command sequence simulation
 cli.run("run-scenario:recovery")
 cli.run("diagnostics")
 cli.run("get-token")
 cli.run("diagnostics")
 cli.run("run-scenario:recovery")
 
-// 4️⃣ Připojení komponenty a loggeru do kontextu
+// Connect component and logger to context
 controller.context.component = "RecoveryPanel"
 controller.context.commandLogger = cli.logger
 
-// 5️⃣ Vykreslení výsledku
+// Render the result
 const renderer = new ComponentRenderer(controller.context)
 const view = renderer.render()
 
-console.log("🧭 Výstup vizualizace:")
+console.log("Output visualization:")
 console.log(view.join("\n"))
 
-console.log("📋 Logger obsahuje:")
+console.log("Logger contains:")
 console.log(cli.logger.getHistory())

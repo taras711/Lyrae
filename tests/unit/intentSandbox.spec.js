@@ -1,3 +1,9 @@
+/*
+
+This test suite contains tests for the IntentSandboxRunner.
+
+*/
+
 const IntentSandboxRunner = require('../../sectors/orchestration/IntentSandboxRunner')
 
 describe('IntentSandboxRunner', () => {

@@ -1,3 +1,9 @@
+/*
+
+This test suite contains queue behavior tests for the GhostIntentManager.
+
+*/
+
 describe('GhostIntentManager – Queue Behavior', () => {
   const manager = new GhostIntentManager();
 

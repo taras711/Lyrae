@@ -1,3 +1,9 @@
+/*
+
+This test suite contains tests for the SecureIntentWrapper.
+
+*/
+
 const secureIntentWrapper = require('../../sectors/orchestration/SecureIntentWrapper');
 
 test('executes intent successfully within timeout', async () => {

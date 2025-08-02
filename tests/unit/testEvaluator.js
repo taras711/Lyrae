@@ -1,4 +1,10 @@
-const SecurityToken = require("../../core/security/securityToken")
+/*
+
+This test suite contains tests for the IntentEvaluator.
+
+*/
+
+const SecurityToken = require("../../core/security/SecurityToken")
 const IntentEvaluator = require("../../sectors/orchestration/IntentEvaluator")
 
 const token = new SecurityToken({
@@ -18,10 +24,10 @@ evaluator.registerRule("audit", [
 ])
 
 const result1 = evaluator.evaluate("diagnostics", token)
-console.log("🧠 Výsledek (diagnostics):", result1)
+console.log("Result (diagnostics):", result1)
 
 const result2 = evaluator.evaluate("audit", token)
-console.log("🧠 Výsledek (audit):", result2)
+console.log("Result (audit):", result2)
 
-console.log("📜 Definovaná pravidla:")
+console.log("Defined rules:")
 console.log(evaluator.describe())

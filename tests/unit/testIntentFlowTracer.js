@@ -1,4 +1,10 @@
-const SecurityToken = require("../../core/security/securityToken")
+/*
+
+ It tests the tracing of intents, including the handling of security tokens and evaluator results.
+ 
+ */
+
+const SecurityToken = require("../../core/security/SecurityToken")
 const IntentFlowTracer = require("../../sectors/orchestration/IntentFlowTracer")
 
 const tracer = new IntentFlowTracer()
@@ -18,7 +24,7 @@ const sectorResponse = {
 }
 
 const trace = tracer.traceIntent({ intent: "recovery", token, evaluatorResult, sectorResponse })
-console.log("🧠 Tok záměru:", trace)
+console.log("Flow of intention:", trace)
 
-console.log("📜 Kompletní log:")
+console.log("Complete log:")
 console.log(tracer.describeFlow())

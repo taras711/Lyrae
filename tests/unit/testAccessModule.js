@@ -1,14 +1,20 @@
+/*
+
+This test suite contains tests for the AccessControlledModule.
+
+*/
+
 const AccessControlledModule = require("../../modules/AccessControlledModule")
-const SecurityToken = require("../../core/security/securityToken")
+const SecurityToken = require("../../core/security/SecurityToken")
 
 const mod = new AccessControlledModule("DataSync")
 
 mod.registerMethod("activateSync", (payload, token) => {
-  return `🔄 Sync aktivován pro ${token.userId}`
+  return `Activating sync for ${token.userId}`
 }, ["core.sync.activate"])
 
 mod.registerMethod("flushCache", () => {
-  return "🧹 Cache vyprázdněna"
+  return "Cache flushed"
 }, ["core.cache.flush"])
 
 const token = new SecurityToken({

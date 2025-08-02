@@ -1,3 +1,9 @@
+/*
+
+This test suite contains advanced feature tests for the IntentScheduler.
+
+*/
+
 const { IntentScheduler } = require('../../core/Scheduler/IntentScheduler');
 
 describe('IntentScheduler – Advanced Features', () => {
@@ -7,7 +13,7 @@ describe('IntentScheduler – Advanced Features', () => {
     scheduler = new IntentScheduler(2);
   });
 
-  jest.setTimeout(2000); // Pro jistotu delší timeout
+  jest.setTimeout(2000); // Set timeout for async tests
 
   it('activates intents by priority', done => {
     const order = [];

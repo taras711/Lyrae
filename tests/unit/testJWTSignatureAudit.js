@@ -1,4 +1,6 @@
+
 const crypto = require("crypto")
+const config = require("../../config")
 const { signToken } = require("../../core/security/SecurityTokenLayer")
 const SecurityToken = require("../../core/security/SecurityToken")
 const {
@@ -7,22 +9,21 @@ const {
   exportAttemptsToJSON
 } = require("../../core/services/JWTSignatureAudit")
 
-// ✅ Testovací secret
-const SECRET = "nebula-secret"
+const SECRET = config.jwtSecret
 
-// 🧑 Simulace uživatelů
+// User simulation
 const testUsers = [
   { userId: "USR-1001", role: "user", trust: 0.42 },
   { userId: "USR-1002", role: "admin", trust: 0.89 },
   { userId: "USR-1003", role: "guest", trust: 0.13 }
 ]
 
-// 🧪 Vytvoření tokenů a simulace ověření
+// Token creation and verification simulation
 testUsers.forEach(user => {
   const jwtString = signToken(user)
   const token = new SecurityToken(jwtString)
 
-  // 🔁 Ověření s reálným secret
+  // Verification with real secret
   const resultA = token.verifySignature(SECRET) ? "valid" : "invalid"
   recordSignatureAttempt({
     tokenId: jwtString.slice(0, 12),
@@ -33,7 +34,7 @@ testUsers.forEach(user => {
     result: resultA
   })
 
-  // 🔐 Ověření s chybným secret
+  // Verification with incorrect secret
   const resultB = token.verifySignature("wrong-secret") ? "valid" : "invalid"
   recordSignatureAttempt({
     tokenId: jwtString.slice(0, 12),
@@ -45,11 +46,11 @@ testUsers.forEach(user => {
   })
 })
 
-// 📜 Výpis auditních záznamů
-console.log("🔍 JWT Signature Audit Log:")
+// Audit log extract
+console.log("JWT Signature Audit Log:")
 getAllAttempts().forEach(entry => {
-  console.log(`🕒 ${new Date(entry.timestamp).toLocaleTimeString()} | ${entry.userId} (${entry.role}) → ${entry.result}`)
+  console.log(`${new Date(entry.timestamp).toLocaleTimeString()} | ${entry.userId} (${entry.role}) → ${entry.result}`)
 })
 
-// 📁 Export do souboru
+// Export to file
 exportAttemptsToJSON("signatureAuditLog.json")

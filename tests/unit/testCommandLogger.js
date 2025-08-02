@@ -1,3 +1,9 @@
+/*
+
+This test suite contains tests for the CommandLogger.
+
+*/
+
 const SessionController = require("../../core/runtime/SessionController")
 const RuntimeRegistry = require("../../core/registry/RuntimeRegistry")
 const CommandInterface = require("../../core/interface/CommandInterface")
@@ -22,5 +28,5 @@ commands.forEach(cmd => {
   logger.log({ command: cmd, result })
 })
 
-console.log("📋 Historie příkazů:")
+console.log("Command History:")
 console.log(logger.exportAsJSON())

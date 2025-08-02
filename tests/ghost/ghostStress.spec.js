@@ -1,3 +1,9 @@
+/*
+
+This test suite contains stress tests for the GhostIntentManager.
+
+*/
+
 describe('GhostIntentManager – Stress Tests', () => {
   const manager = new GhostIntentManager();
 

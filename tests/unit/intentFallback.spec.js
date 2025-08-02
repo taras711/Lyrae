@@ -1,3 +1,9 @@
+/*
+
+This test suite contains tests for the FallbackIntentHandler.
+
+*/
+
 const FallbackIntentHandler = require('../../sectors/orchestration/FallbackIntentHandler');
 
 describe('FallbackIntentHandler', () => {

@@ -1,3 +1,9 @@
+/*
+
+  It tests the routing of intents based on the provided DSL and command logger.
+
+*/
+
 const CommandLogger = require("../../services/logger/CommandLogger")
 const IntentRouter = require("../../core/router/IntentRouter")
 
@@ -19,5 +25,5 @@ panel AuditPanel {
 const router = new IntentRouter(logger, dsl)
 const result = router.route()
 
-console.log("🧭 Routing rozhodnutí:")
+console.log("🧭 Routing decision:")
 console.log(result)

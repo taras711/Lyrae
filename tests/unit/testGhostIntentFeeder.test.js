@@ -1,3 +1,11 @@
+/*
+
+ * Mocking localStorage for testing purposes
+
+ */
+
+// Mocking localStorage for Node.js environment
+// This is necessary because localStorage is not available in Node.js by default
 global.localStorage = {
   store: {},
   getItem(key) { return this.store[key] || null; },
@@ -21,6 +29,7 @@ describe('Ghost System', () => {
     PersistentGhostQueue.clear();
   });
 
+  // Test feeding ghost queue
   test('feedGhostQueue creates correct intents', () => {
     feedGhostQueue(5);
     const queue = PersistentGhostQueue.load();
@@ -44,20 +53,22 @@ describe('Ghost System', () => {
     });
   });
 
-test('getIntentById finds correct intent', () => {
-  feedGhostQueue(5);
-  const intent = getIntentById('ghost-0');
-  expect(intent).toBeDefined();
-  expect(intent.id).toBe('ghost-0');
-});
+  // Test getting intent by ID
+  test('getIntentById finds correct intent', () => {
+    feedGhostQueue(5);
+    const intent = getIntentById('ghost-0');
+    expect(intent).toBeDefined();
+    expect(intent.id).toBe('ghost-0');
+  });
 
-test('removeIntentById removes intent from queue', () => {
-  removeIntentById('ghost-0');
-  const intent = getIntentById('ghost-0');
-  expect(intent).toBeUndefined();
-});
+  // Test removing intent by ID
+  test('removeIntentById removes intent from queue', () => {
+    removeIntentById('ghost-0');
+    const intent = getIntentById('ghost-0');
+    expect(intent).toBeUndefined();
+  });
 
-
+  // Test adding intent to persistent queue
   test('addIntent adds intent to persistent queue', () => {
     const newIntent = {
       id: 'ghost-custom',
@@ -77,12 +88,14 @@ test('removeIntentById removes intent from queue', () => {
     expect(queue.find(i => i.id === 'ghost-custom')).toEqual(newIntent);
   });
 
+  // Test feeding ghost queue with zero intents
   test('feedGhostQueue(0) leaves queue empty', () => {
     feedGhostQueue(0);
     const queue = PersistentGhostQueue.load();
     expect(queue).toEqual([]);
   });
 
+  // Test multiple feeds accumulate intents
   test('multiple feeds accumulate intents', () => {
     feedGhostQueue(2);
     feedGhostQueue(3);
@@ -90,8 +103,3 @@ test('removeIntentById removes intent from queue', () => {
     expect(queue.length).toBe(5);
   });
 });
-
-// for run tests example:
-// npx jest tests/unit/testGhostIntentFeeder.test.js --runInBand --detectOpenHandles --forceExit
-// or npx jest tests/unit/testGhostIntentFeeder.test.js --runInBand --detectOpenHandles --forceExit
-// or for record to file "tests/jest-report.json" npx jest tests/unit/testGhostIntentFeeder.test.js --runInBand --detectOpenHandles --forceExit --json --outputFile=tests/jest-report.json

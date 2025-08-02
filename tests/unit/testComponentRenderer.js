@@ -1,3 +1,9 @@
+/*
+
+This test suite contains tests for the ComponentRenderer.
+
+*/
+
 const SessionController = require("../../core/runtime/SessionController")
 const CommandInterface = require("../../core/interface/CommandInterface")
 const ComponentRenderer = require("../../components/ComponentRenderer")
@@ -14,15 +20,15 @@ controller.start()
 const cli = new CommandInterface(controller)
 const logger = cli.logger
 
-// Simulace příkazů
+// Command simulation
 cli.run("run-scenario:recovery")
 cli.run("run-scenario:recovery")
 cli.run("diagnostics")
 cli.run("get-token")
 
-// Vykreslení podle záměru
+// Intent-based rendering
 const renderer = new ComponentRenderer({ component: "RecoveryPanel", commandLogger: logger })
 const view = renderer.render()
 
-console.log("🧭 Výstup komponenty podle záměru:")
+console.log("Component output based on intent:")
 console.log(view.join("\n"))

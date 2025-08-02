@@ -1,3 +1,9 @@
+/*
+
+This test suite contains tests for the SessionController.
+
+*/
+
 const SessionController = require("../../core/runtime/SessionController")
 
 const controller = new SessionController({
@@ -8,8 +14,8 @@ const controller = new SessionController({
 
 const output = controller.start()
 
-console.log("🔁 Výstup controlleru:")
-console.log("Scénář:", output.state)
-console.log("Komponenta:", output.componentView.join("\n"))
+console.log("Output:")
+console.log("Scenario:", output.state)
+console.log("Component:", output.componentView.join("\n"))
 console.log("Audit log:", output.auditLog)
 console.log("Token info:", output.tokenInfo)
