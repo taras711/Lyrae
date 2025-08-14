@@ -1,0 +1,77 @@
+{
+  "scopeName": "source.lyra",
+  "name": "Lyra",
+  "fileTypes": ["lyra"],
+  "patterns": [
+    {
+      "name": "comment.block.lyra",
+      "begin": "^(\\s*)!!!\\s*$",
+      "beginCaptures": { "0": { "name": "punctuation.definition.comment.begin.lyra" } },
+      "end": "^(\\s*)!!!\\s*$",
+      "endCaptures": { "0": { "name": "punctuation.definition.comment.end.lyra" } },
+      "patterns": [
+        { "match": ".+", "name": "comment.block.lyra" }
+      ]
+    },
+    {
+      "name": "comment.line.exclam.lyra",
+      "match": "^(\\s*)!!!.*$"
+    },
+    {
+      "name": "keyword.control.lyra",
+      "match": "\\b(keep|box|let|fn|each|in|if|then|elseif|else|end|break|continue|pause|log|return|match|case|stream|shadow|atomic|predict)\\b"
+    },
+    {
+      "name": "keyword.operator.lyra",
+      "match": "(==|!=|<=|>=|<|>|\\+|\\-|\\*|\\/|%|=|->|\\.\\.|\\blike\\b|\\band\\b|\\bor\\b|\\bnot\\b|!)"
+    },
+    {
+      "name": "constant.language.boolean.lyra",
+      "match": "\\b(true|false)\\b"
+    },
+    {
+      "name": "string.quoted.double.lyra",
+      "begin": "\"",
+      "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.lyra" } },
+      "end": "\"",
+      "endCaptures": { "0": { "name": "punctuation.definition.string.end.lyra" } },
+      "patterns": [
+        {
+          "name": "constant.other.placeholder.hash.lyra",
+          "match": "#[A-Za-z_]\\w*#"
+        },
+        {
+          "name": "constant.character.escape.lyra",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "string.quoted.backtick.lyra",
+      "begin": "`",
+      "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.lyra" } },
+      "end": "`",
+      "endCaptures": { "0": { "name": "punctuation.definition.string.end.lyra" } },
+      "patterns": [
+        {
+          "name": "constant.other.placeholder.hash.lyra",
+          "match": "#[A-Za-z_]\\w*#"
+        }
+      ]
+    },
+    {
+      "name": "comment.line.exclam.inline.lyra",
+      "match": "!!!.*$"
+    },
+
+    {
+      "name": "constant.numeric.lyra",
+      "match": "\\b\\d+(?:\\.\\d+)?\\b"
+    },
+    {
+      "name": "variable.other.member.lyra",
+      "match": "\\b[a-zA-Z_][\\w]*\\b(?:\\.[a-zA-Z_][\\w]*)*"
+    }
+  ],
+  "uuid": "12345678-lyra-0000-0000-000000000000"
+}

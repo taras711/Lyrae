@@ -1,0 +1,14 @@
+{
+  "iconDefinitions": {
+    "lyra-icon": {
+      "iconPath": "./lyra.svg"
+    }
+  },
+  "fileExtensions": {
+    "lyra": "lyra-icon"
+  },
+  "folder": "folder",
+  "folderExpanded": "folder-open",
+  "rootFolder": "root-folder",
+  "rootFolderExpanded": "root-folder-open"
+}

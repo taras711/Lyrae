@@ -1,0 +1,105 @@
+!!!
+    stream — brief description 
+    Purpose: Defines a named or anonymous block of commands that execute sequentially and can modify the state of variables, log, and perform other actions. It is useful for grouping related steps. 
+    Characteristics: 
+        - Syntax: 
+            stream [label] [qualifier] 
+                commands… 
+            end 
+        - Label (name) is optional and can be used to identify the block. 
+        - Qualifier (optional): shadow, atomic, predict — adds special behavior during processing. 
+        - The content of the block can be any sequence of statements: 
+            - assignments (score = 50) 
+            - expressions (log …, log match …) 
+            - conditions, loops 
+        - Has access to all variables from the surrounding context, including 'it' when used in 'each' loops. 
+        - Can be nested within other blocks (if, each) or within other streams (if desired).
+!!!
+
+!!! 
+    Basic stream with a signal
+    Simple block with one command
+!!!
+stream stats
+  log "Začínáme stream #score#"
+end
+
+!!! 
+    Stream with assignment and calculation
+    Assignment changes the state of variables for the rest of the run.
+!!!
+stream update
+  score = score + 5
+  threshold = 60
+  log "Nové hodnoty: #score# / #threshold#"
+end
+
+!!! 
+    Conditional logic within the stream
+    You can use all common control structures inside.
+!!!
+stream check
+  if score < threshold then
+    log "⚠️ Skóre pod limitem"
+  else
+    log "✅ OK"
+  end
+end
+
+!!! 
+    Use of the qualifier
+    The qualifier is passed into the AST (node.qualifier)
+!!!
+stream stats atomic
+  log "Tento blok běží atomicky"
+end
+
+!!! 
+    Multiple commands and side effects
+    You can run log match directly inside the stream.
+!!!
+stream stats
+  score = 50
+  threshold = 45
+  log `⚠️ Nízke skóre #score#`
+  log match score
+    case score < threshold -> "❌ Fail"
+    case _ -> "✅ Pass"
+  end
+end
+
+!!! 
+    Stream in context
+    The stream has access to all variables from the surrounding context (u, it)
+!!!
+each u in users
+  stream usercheck
+    log "Kontroluji #u.name#"
+    if u.score < 50 then
+      log "⚠️ Nízké skóre"
+    end
+  end
+end
+
+!!! 
+    Working with IT in the stream
+    it refers to the current element in the iteration
+!!!
+each num in [10, 20, 30]
+  stream numbers
+    log "Hodnota: #it#"
+  end
+end
+
+!!! 
+    Nested streams (if enabled)
+    Useful if you want to logically structure the steps.
+!!!
+stream outer
+  log "Začátek"
+  stream inner
+    log "Vnitřní blok"
+  end
+  log "Konec"
+end
+

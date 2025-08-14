@@ -1,0 +1,129 @@
+!!! 
+    log match — brief description 
+    Purpose: 
+        Evaluates an expression or variable against a set of case patterns and performs logging or a block of commands based on the match. Allows for branching logic without writing a full if/elseif.
+    Characteristics: 
+        - Syntax: 
+            log match [target] 
+                case condition | value | range -> expression | block 
+                case _ -> default action 
+            end 
+    - The target after match is optional – it can be a variable, property, or any expression. 
+    - case can contain: 
+        - relational and logical operators (==, <, and, or, not, parentheses) 
+        - range (start..end) 
+        - _ as "anything else" (default) 
+    - Actions after -> can be: 
+        - an expression (typically a string with interpolation #var#) 
+        - multiple commands (block until the next case or end) 
+    - Utilizes current variables from the context (keep, it in iterations, etc.)
+!!!
+
+keep score = 85
+keep threshold = 65
+keep u = { name: "Pepa" }
+
+!!! 
+    Basic comparison
+    Comparison for equality, inequality, greater/less than, case _ as default
+!!!
+log match score
+  case score >= 80 -> "✅ Passed"
+  case score < 60 -> "🚨 Nízké skóre: #score#"
+  case _ -> "ℹ️ Standardní výstup"
+end
+
+!!! 
+    Logical operators
+    Supports and, or, not and the grouping of conditions
+!!!
+log match score
+  case score >= 80 and score <= 90 -> "👌 V normě"
+  case score < 60 or score > 95 -> "⚠️ Mimo rozsah"
+end
+
+!!! 
+    Ranges (RangePattern)
+    Comparison of numbers against a closed interval
+!!!
+log match score
+  case 1..5 -> "📉 Velmi nízké skóre"
+  case 6..10 -> "📈 Zlepšení"
+end
+
+!!! Mutation
+stream stats
+    keep score = 70
+    keep threshold = 65
+end
+
+!!! 
+    Match without explicit variable
+    You can write conditions directly, without specifying the target after the match.
+!!!
+log match
+  case score > threshold -> "✅ Passed"
+  case _ -> "❌ Failed"
+end
+
+!!! 
+    Targeting another variable or expression
+    Comparison of the value of the property or any expression
+!!!
+log match u.name
+  case "Pepa" -> "Ahoj, #u.name#!"
+  case _ -> "Neznámý uživatel"
+end
+
+!!! 
+    Interpolation in the output
+    #score# will be replaced by the current value upon evaluation.
+!!!
+log match score
+  case score < 50 -> "⚠️ Nízké skóre #score#"
+  case _ -> "OK: #score#"
+end
+
+!!! 
+    Backtick stringy
+    Same interpolation as in '...', but allows for writing more lines.
+!!!
+log match score
+  case score < 50 -> `⚠️ Nízké skóre #score# / limit #threshold#`
+  case _ -> `OK: #score#`
+end
+
+!!! 
+    Compound conditions and multiple variables
+    The case expression can use all available variables from the context.
+!!!
+log match
+  case score < 60 and threshold < 70 -> "❌ Obě hodnoty nízké (#score# / #threshold#)"
+  case score >= 80 or threshold > 75 -> "✅ Aspoň jedna hodnota dobrá"
+  case _ -> "ℹ️ Střední hodnota"
+end
+
+!!! 
+    More actions in the case
+    Instead of one expression after -> there can be a block of statements (until the next case/end)
+!!!
+log match score
+  case score < 50 ->
+    log "⚠️ Nízké skóre #score#"
+    keep alert = true
+  case _ -> log "V pořádku"
+end
+
+!!! Case with negotiation
+log match score
+  case not (score >= 50) -> "Pod 50"
+  case _ -> "50 a víc"
+end
+
+
+
+
+
+
+
+

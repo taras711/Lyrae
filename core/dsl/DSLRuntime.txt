@@ -14,10 +14,7 @@ function evaluate(ast, context) {
     case 'NumberLiteral':
     case 'BooleanLiteral':
       return resolveValue(ast, context);
-    case 'StreamBlock':
-      return evaluateStreamBlock(ast, context);
-    case 'BacktickStringLiteral':
-      return ast.value;
+
     case 'LogMatchStatement':
       return evaluateLogMatch(ast, context);
 
@@ -41,31 +38,18 @@ function evaluate(ast, context) {
     case "Identifier":
       return resolveValue(ast, context);
 
-   case 'LogStatement':
-    if (!ast.argument) {
-      throw new Error(`❌ LogStatement missing argument: ${JSON.stringify(ast)}`);
-    }
-    if (!context || typeof context !== 'object') {
-      console.error('⚠️ LogStatement received invalid context:', context);
-    }
-
-    let value = resolveValue(ast.argument, context);
-
-    // jednoduchá interpolace – nahrazuje #name# aktuální hodnotou z kontextu
-    if (typeof value === 'string') {
-      value = value.replace(/#(\w+)#/g, (_, name) => {
-        if (context.variables && name in context.variables) {
-          return context.variables[name];
-        }
-        if (name in context) {
-          return context[name];
-        }
-        return _; // nech původní text, pokud proměnná neexistuje
-      });
-    }
-
-    console.log('📝', value);
-    return;
+    case 'LogStatement':
+      if (!ast.argument) {
+        throw new Error(`❌ LogStatement missing argument: ${JSON.stringify(ast)}`);
+      }
+      if (!context || typeof context !== 'object') {
+        console.error('⚠️ LogStatement received invalid context:', context);
+      }
+      //console.log('📤 Log argument typ:', ast.argument?.type);
+      //console.log('🔍 LogStatement AST:', JSON.stringify(ast.argument, null, 2));
+      const value = resolveValue(ast.argument, context);
+      console.log('📝', value);
+      return;
     
     // case 'UnaryExpression':
     //   const arg = evaluate(ast.argument, context);
@@ -176,7 +160,7 @@ function evaluate(ast, context) {
 }
 
 function evaluateLogMatch(node, context) {
-  const value = node.value ? evaluate(node.value, context) : context;
+  const value = evaluate(node.value, context);
 
   if (node.value?.type === 'Identifier' && !(node.value.value in context)) {
     console.warn(`⚠️ Proměnná '${node.value.value}' nebyla nalezena.`);
@@ -184,6 +168,7 @@ function evaluateLogMatch(node, context) {
 
   for (const c of node.cases || []) {
     if (patternMatches(c.pattern, value, context)) {
+      // Kontext obohatíme o 'it' a zachováme existující proměnné (včetně 'score')
       const enrichedContext = {
         ...context,
         variables: {
@@ -193,6 +178,7 @@ function evaluateLogMatch(node, context) {
         }
       };
 
+      // Guard bezpečně vyhodnotíme
       let passed = true;
       if (c.guard) {
         try {
@@ -206,14 +192,10 @@ function evaluateLogMatch(node, context) {
       if (passed) {
         if (c.expressionBody) {
           console.log('🧪 Guard context variables:', Object.keys(enrichedContext.variables));
-          let out = evaluate(c.expressionBody, enrichedContext);
+          const out = evaluate(c.expressionBody, enrichedContext);
           if (out == null) {
             console.warn("Expression body returned null:", c.expressionBody);
           }
-          if (typeof out === 'string') {
-            out = interpolate(out, enrichedContext);
-          }
-
           logValue(out);
           return out;
         }
@@ -222,6 +204,7 @@ function evaluateLogMatch(node, context) {
     }
   }
 
+  // default větev
   if (node.default) {
     const enrichedContext = {
       ...context,
@@ -234,11 +217,6 @@ function evaluateLogMatch(node, context) {
 
     if (node.default.expressionBody) {
       const out = evaluate(node.default.expressionBody, enrichedContext);
-      
-      if (typeof out === 'string') {
-        out = interpolate(out, enrichedContext);
-      }
-
       logValue(out);
       return out;
     }
@@ -246,68 +224,6 @@ function evaluateLogMatch(node, context) {
   }
 
   return null;
-}
-
-function interpolate(str, context) {
-  return str.replace(/#([A-Za-z_]\w*)#/g, (_, name) => {
-    // zkusit v context.variables
-    if (context.variables && name in context.variables) {
-      return context.variables[name];
-    }
-    // nebo přímo v contextu
-    if (name in context) {
-      return context[name];
-    }
-    // když není nalezeno, vrátit původní placeholder
-    return `#${name}#`;
-  });
-}
-
-function evaluateStreamBlock(streamBlock, context) {
-  const { qualifier, body } = streamBlock;
-  const localContext = { ...context };
-
-  for (const stmt of body) {
-    switch (stmt.type) {
-      case 'BinaryExpression':
-      case 'LogicalExpression':
-      case 'Identifier':
-      case 'NumberLiteral':
-      case 'StringLiteral':
-        const result = evaluate(stmt, localContext);
-        console.log('[STREAM VALUE]', result);
-        break;
-
-      case 'Assignment':
-        context[stmt.name] = evaluate(stmt.value, context);
-        break;
-
-      case 'LogStatement':
-        let out = evaluate(stmt.argument, context);
-        if (typeof out === 'string') {
-          out = interpolate(out, context);
-        }
-        console.log(out);
-        break;
-      case 'ExpressionStatement':
-        evaluate(stmt.expression, context);
-        break;
-
-      case 'FunctionCall':
-        return handleFunctionCall(stmt, context);
-
-      
-      case 'ExpressionStatement':
-        const res = evaluate(stmt.expression, localContext);
-        console.log('[EVAL]', res);
-        break;
-
-      default:
-        throw new Error(`Unknown statement type in stream: ${stmt.type}`);
-    }
-  }
-
-  return localContext;
 }
 
 function patternMatches(pattern, value, context) {
@@ -336,24 +252,6 @@ function patternMatches(pattern, value, context) {
     }
     default:
       throw new Error(`Unknown pattern type: ${pattern.type}`);
-  }
-}
-
-function handleFunctionCall(expr, context) {
-  // Pokud expr je omylem identifikátor, vrátit chybu:
-  if (expr.type !== 'FunctionCall') {
-    throw new Error(`❌ Expected FunctionCall but got '${expr.type}'`);
-  }
-
-  const args = expr.arguments.map(arg => evaluate(arg, context));
-
-  switch (expr.name) {
-    case 'log':
-      console.log('[LOG]', ...args);
-      break;
-
-    default:
-      throw new Error(`❌ Unknown function '${expr.name}'`);
   }
 }
 

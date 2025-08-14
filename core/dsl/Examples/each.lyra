@@ -1,0 +1,67 @@
+!!!
+    each - Brief description
+    Purpose:
+        Iterates (goes through) a collection of values, objects, or a range of numbers and executes a block of commands for each element.Introduces a variable with the current item into the current context, optionally a special alias 'it'.
+    Characteristics:
+        - Syntax:
+            -each <var> in <collection>
+                ...commands...
+            end
+            -each <var> in <collection>
+                ...commands...
+            end
+        - or shortened:
+            each <collection>
+                ...commands using it...
+            end
+        - <collection> can be:
+            - array / list ([1, 2, 3])
+            - range (1..10)
+            - variable with iterable value
+            - result of a function that returns a list/iterator
+        - Inside the block:
+            - <var> refers to the current element
+            - 'it' acts as an implicit reference if the name is not specified
+            - you have access to all other variables in the context.
+!!!
+
+!!! Array iteration
+keep users = ["Pepa", "Jana", "Karel"]
+
+each u in users
+  log "Uživatel: #u#"
+end
+
+!!! Implicit it
+each [10, 20, 30]
+  log "Hodnota: #it#"
+end
+
+!!! Range of numbers
+each n in 1..5
+  log "Číslo: #n#"
+end
+
+!!! each with a condition
+each score in [45, 72, 88]
+  if score < 50 then
+    log "⚠️ Nízké skóre #score#"
+  end
+end
+
+!!! Nested each
+each user in users
+  each task in user.tasks
+    log "#user.name#: #task#"
+  end
+end
+
+!!! combination with stream
+each u in users
+  stream checkUser
+    log "Kontroluji #u.name#"
+    if u.score < 50 then
+      log "⚠️ Nízké skóre"
+    end
+  end
+end

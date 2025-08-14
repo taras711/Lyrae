@@ -1,13 +1,11 @@
 // DSLCompiler.js
 
 function tokenize(input) {
-  // 0) Preprocess komentáře (NEPŘIDÁVAT další regex replace pod tím!)
-  input = preprocessLyraComments(input);
-
-  const regex = /\s*(->|\.\.|=>|==|!=|<=|>=|=|!|\+|\-|\*|\/|%|<|>|:|,|\(|\)|"[^"]*"|`[^`]*`|\d+(?:\.\d+)?|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)\s*/g;
+  const regex = /\s*(->|\.\.|=>|==|!=|<=|>=|=|!|\+|\-|\*|\/|%|<|>|:|,|\(|\)|"[^"]*"|\d+(?:\.\d+)?|[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)\s*/g;
 
   const tokens = [];
   let match;
+
   while ((match = regex.exec(input)) !== null) {
     const value = match[1];
     let type = 'UNKNOWN';
@@ -21,67 +19,16 @@ function tokenize(input) {
     else if (value === ',') type = 'COMMA';
     else if (/^\d+(\.\d+)?$/.test(value)) type = 'NUMBER';
     else if (value === ')') type = 'RPAREN';
-    else if (/^`[^`]*`$/.test(value)) type = 'BT_STRING';
+    else if (/^\d+(\.\d+)?$/.test(value)) type = 'NUMBER';
     else if (/^[\w\.]+$/.test(value)) type = 'IDENTIFIER';
     else if (value === ':') type = 'COLON';
+
 
     tokens.push({ type, value });
   }
 
   return tokens;
 }
-
-function preprocessLyraComments(input) {
-  const lines = input.split(/\r?\n/);
-  const out = [];
-  let inBlock = false;
-
-  for (let line of lines) {
-    const trimmed = line.trim();
-
-    // Long block start/stop: pouze pokud je !!! samotné na řádku
-    if (!inBlock && trimmed === '!!!') {
-      inBlock = true;
-      continue; // neukládej tento řádek
-    }
-    if (inBlock && trimmed === '!!!') {
-      inBlock = false;
-      continue; // neukládej ani uzavírací řádek
-    }
-    if (inBlock) {
-      continue; // uvnitř bloku vše zahodit
-    }
-
-    // Inline short komentář: !!! ... do konce řádku, ale NE uvnitř stringů/backticků
-    out.push(stripInlineComments(line));
-  }
-
-  return out.join('\n');
-}
-
-function stripInlineComments(line) {
-  let inString = false;
-  let quote = null;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-
-    // přepínání mezi "..." a `...`
-    if (ch === '"' || ch === '`') {
-      if (!inString) {
-        inString = true; quote = ch;
-      } else if (quote === ch) {
-        inString = false; quote = null;
-      }
-    }
-
-    // pokud nejsme ve stringu a vidíme !!!
-    if (!inString && ch === '!' && line.slice(i, i + 3) === '!!!') {
-      return line.slice(0, i); // useknout zbytek řádku
-    }
-  }
-  return line;
-}
-
 
 function parseTokens(tokens) {
   let i = 0;
@@ -175,12 +122,6 @@ function parseTokens(tokens) {
       const expr = parseExpression();
       expectType('RPAREN');
       return expr;
-    }
-
-    if (tok.type === 'BT_STRING') {
-      i++;
-      // můžeme hodnotu rovnou uložit bez backticků
-      return { type: 'BacktickStringLiteral', value: tok.value.slice(1, -1) };
     }
 
     // number
@@ -769,18 +710,6 @@ function parseTokens(tokens) {
       // lookahead: pokud hned za identifikátorem následuje operátor, je to výraz (ne volání)
       const next = peek(1);
       const opSet = ['+', '-', '*', '/', '%', '==', '!=', '<', '>', '<=', '>=', 'like', '='];
-      if (next && next.type === 'OPERATOR' && next.value === '=') {
-        // assignment statement
-        const varName = consume('IDENTIFIER').value;
-        consume('OPERATOR', '=');
-        const valueExpr = parseExpression();
-        return {
-            type: 'Assignment',
-            name: varName,
-            value: valueExpr
-        };
-      }
-
       if (next && next.type === 'OPERATOR' && opSet.includes(next.value)) {
         const expr = parseExpression();
         return { type: 'ExpressionStatement', expression: expr };

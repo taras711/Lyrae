@@ -1,0 +1,17 @@
+keep ghost = object({
+  id: "u1",
+  type: "GhostToken",
+  data: { userId: "u1", trust: 0.72, role: "Admin", history: ["hovered:alertPayload"] }
+})
+
+keep frame = shadow.frame(ghost.data)
+keep decision = shadow.eval(frame, orchestrator)
+
+if decision.decision == "simulateTrigger"
+  stream apply atomic shadow
+    tasks.patch("t42", { done: true })
+    shadow.emit({ intent: decision.intent, sector: decision.sectorId, lvl: decision.confidence })
+  end
+else
+  log "observeOnly"
+end

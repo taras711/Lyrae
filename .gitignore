@@ -9897,3 +9897,5 @@ node_modules/core-js-pure/features/array-buffer/transfer.js
 node_modules
 main.py
 .env
+core/dsl/plan.txt
+treeDocumentation.py

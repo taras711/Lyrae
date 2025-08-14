@@ -1,0 +1,43 @@
+!!!
+    keep — brief description
+    Purpose:
+        Declares and/or stores a variable's value in the current context to make it available in other parts of the script or in subsequent runs (depending on how you define it at runtime).
+    Characteristics:
+        - Syntax:
+            keep <name> = <expression>
+        - If the variable does not exist yet, keep will create it and store it with the current value.
+        - If it already exists, it will overwrite it with a new value and keep it for the rest of the script's execution.
+        - The value can be:
+            - a literal (94, "Hello", `Text`)
+            - the result of an expression (score + 10)
+            - the result of a function
+        - keep works with variables at the level of the current context (e.g., global, iteration, stream)
+!!!
+
+!!! Basic setting of values
+keep x, y
+keep score = 94
+keep greeting = "Zdravím"
+
+!!! Use of the expression
+keep bonus = score * 0.1
+
+!!! Inside if/else
+if score < 50 then
+  keep status = "fail"
+else
+  keep status = "pass"
+end
+
+!!! Inside each
+each u in users
+  keep currentUser = u.name
+  log "Zpracovávám #currentUser#"
+end
+
+!!! In combination with stream
+stream stats
+  keep score = 50
+  keep threshold = 45
+  log `⚠️ Nízke skóre #score#`
+end

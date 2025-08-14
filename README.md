@@ -1,5 +1,5 @@
 
-![Lyrae Logo](logo.png)
+![Lyrae Logo](logo.jpg)
 # Lyrae
 **A next-generation security language with intelligent contextual logic and shadow communication.**
 

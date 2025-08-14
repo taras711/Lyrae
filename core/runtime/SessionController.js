@@ -8,6 +8,8 @@
 
  */
 
+const fs = require("fs")
+const path = require("path");
 const Token = require("../token/Token")
 const LoginScenario = require("../../scenarios/login/LoginScenario")
 const SecurityGroup = require("../../sectors/groups/SecurityGroup")
@@ -17,6 +19,9 @@ const AuditLogger = require("../../services/logger/AuditLogger")
 const RecoveryScenario = require("../../scenarios/recovery/RecoveryScenario")
 const TunnelService = require("../services/TunnelService")
 const AuditService = require("../services/AuditService")
+
+const { tokenize, parseTokens, validateAST } = require("../dsl/DSLCompiler");
+const { evaluate } = require("../dsl/DSLRuntime");
 
 class SessionController {
   constructor(userInput) {
@@ -86,6 +91,26 @@ class SessionController {
     this.context = {}
     return "Session cleared"
   }
+
+  loadDSLScriptFor(eventName) {
+    const filePath = path.join(__dirname, "../dsl/Examples", `${eventName}.lyra`);
+    if(!fs.existsSync(filePath)) {
+      console.error("No such file or directory ", filePath)
+    }
+    return fs.readFileSync(filePath, "utf-8");
+  }
+
+  handleScenarioEvent(event, context) {
+    const script = this.loadDSLScriptFor(event);
+    console.log("📜 LYRA Script:\n", script);
+
+    const tokens = tokenize(script);
+    console.log("🔍 Tokens:", tokens.map(t => `${t.type}: ${t.value}`));
+    const ast = parseTokens(tokens);
+    validateAST(ast);
+    evaluate(ast, context); // spustí akci pokud podmínka platí
+  }
+
 
   /**
    * Activates a session scenario.

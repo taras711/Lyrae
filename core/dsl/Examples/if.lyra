@@ -1,0 +1,101 @@
+!!!
+    if — brief description
+    Purpose:
+        Conditionally executes one or more blocks of commands depending on whether the given expression evaluates to true or false.Allows for writing unambiguous branching with the option for multiple alternatives (elseif) and a default branch (else).
+    Characteristics:
+        - Syntax:
+            if <condition> then
+                ...commands...
+            elseif <anotherCondition> then
+                ...commands...
+            else
+                ...commands...
+            end
+        - <condition> is any expression returning boolean (true/false) — it can include:
+            - relational operators (==, !=, <, >, <=, >=, like)
+            - logical operators (and, or, not)
+            - parentheses to indicate precedence
+         - The elseif and else branches are optional.
+         - Executes from top to bottom: executes the first branch whose condition is true and skips the rest.
+         - Conditions have access to all variables in the current context (keep, it, etc.).
+!!!
+
+keep score = 70
+!!! Basic if/else
+if score >= 80 then
+  log "✅ Passed"
+else
+  log "❌ Failed"
+end
+
+!!! with elseif
+if score >= 80 then
+  log "🏆 Vynikající"
+elseif score >= 60 then
+  log "🙂 Prošel"
+else
+  log "⚠️ Neprošel"
+end
+
+!!! logical operators
+if score >= 80 and threshold > 60 then
+  log "✅ Splňuje obě podmínky"
+else
+  log "❌ Nesplněno"
+end
+
+!!! Denial
+if not (score >= 50) then
+  log "Pod 50"
+end
+
+!!! Use in each
+each u in users
+  if u.role == "Admin" then
+    log "👑 #u.name#"
+  else
+    log "👤 #u.name#"
+  end
+end
+
+!!! Nested if
+if score >= 80 then
+  if bonus > 0 then
+    log "⭐ #score# + bonus"
+  end
+end
+
+!!! Combination with stream
+
+stream check
+  if score < 50 then
+    log "⚠️ Nízké skóre"
+  elseif score < 70 then
+    log "ℹ️ Průměr"
+  else
+    log "✅ Výborně"
+  end
+end
+
+!!! 
+    May also contain 'like' for matching with the pattern or substring.
+!!!
+
+!!! Simple match
+keep name = "Admin"
+
+if name like "Adm*" then
+  log "Jméno začíná na 'Adm'"
+else
+  log "Jméno nezačíná na 'Adm'"
+end
+
+!!! With negotiation
+if not (name like "admin") then
+  log "Neobsahuje 'admin'"
+end
+
+!!! In combination with other conditions
+if u.role like "Admin" and u.active == true then
+  log "👑 Aktivní administrátor"
+end

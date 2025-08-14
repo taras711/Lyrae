@@ -1,0 +1,48 @@
+{
+  "name": "lyra-language-support",
+  "displayName": "Lyra Language Support",
+  "description": "Syntax highlighting and basic support for the Lyra language.",
+  "version": "0.0.1",
+  "publisher": "taras",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taras711/Lyrae.git"
+  },
+  "categories": ["Programming Languages", "Themes"],
+  "keywords": ["icon", "theme", "lyra", "file icons"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "lyra",
+        "aliases": ["Lyra", "LyraScript"],
+        "extensions": [".lyra"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "themes": [
+      {
+        "label": "Lyra Custom Theme",
+        "uiTheme": "vs-dark",
+        "path": "./themes/lyra-color-theme.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "lyra",
+        "scopeName": "source.lyra",
+        "path": "./syntaxes/lyra.tmLanguage.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "lyra-icons",
+        "label": "Lyra Icons",
+        "path": "./icons/lyra-icon-theme.json"
+      }
+    ]
+  },
+  "icon": "lyra.png"
+}

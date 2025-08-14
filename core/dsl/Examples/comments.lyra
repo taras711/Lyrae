@@ -1,0 +1,25 @@
+!!!
+    Comments are used to insert notes into the code, which the parser ignores. 
+    They can be: 
+        - Block comments 
+        - Starting and ending with the !!! marker on a separate line. 
+        - Everything between these markers is ignored. 
+    - Syntax: 
+        !!! This is a note for the entire block. It can have multiple lines. !!! 
+        - Line comments (from the beginning of the line) 
+            - !!! at the beginning of the line to its end. 
+            - Suitable for short notes for the entire line of code. 
+    - Syntax:
+        !!! This condition is temporarily disabled 
+        if something then 
+            log "..." 
+        end
+    - Inline comments- 
+    !!! in the middle of the line → from this marker to the end of the line is a comment.
+    - It is used for notes behind the code without disrupting its execution.
+    - Syntax:
+        case _ -> "Out of monitored range" !!! This branch is triggered rarely 
+        score = 55 !!! Value after calculation
+- We do not write comments inside quotes/backticks: Anything inside "..." or `...` is a string, not a comment. 
+- Nesting comments is not supported - a block !!! cannot be started inside another block !!!
+!!!

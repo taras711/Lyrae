@@ -1,0 +1,68 @@
+{
+  "name": "Lyra Custom Theme",
+  "type": "dark",
+  "colors": {
+    "editor.foreground": "#D0D0D0",
+    "editor.background": "#1E1E1E",
+    "editor.lineHighlightBackground": "#2A2A2A",
+    "editor.selectionBackground": "#264F78",
+    "editorCursor.foreground": "#FFFFFF"
+  },
+  "tokenColors": [
+    {
+      "scope": ["comment.line.exclam.lyra", "comment.block.lyra"],
+      "settings": {
+        "foreground": "#6A9955",
+        "fontStyle": "italic"
+      }
+    },
+    {
+      "scope": "keyword.control.lyra",
+      "settings": {
+        "foreground": "#569CD6",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "keyword.operator.lyra",
+      "settings": {
+        "foreground": "#D4D4D4"
+      }
+    },
+    {
+      "scope": "constant.language.boolean.lyra",
+      "settings": {
+        "foreground": "#569CD6",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": [
+        "string.quoted.double.lyra",
+        "string.quoted.backtick.lyra"
+      ],
+      "settings": {
+        "foreground": "#CE9178"
+      }
+    },
+    {
+      "scope": "constant.other.placeholder.hash.lyra",
+      "settings": {
+        "foreground": "#FFD700",
+        "fontStyle": "bold"
+      }
+    },
+    {
+      "scope": "constant.numeric.lyra",
+      "settings": {
+        "foreground": "#B5CEA8"
+      }
+    },
+    {
+      "scope": "variable.other.member.lyra",
+      "settings": {
+        "foreground": "#9CDCFE"
+      }
+    }
+  ]
+}
